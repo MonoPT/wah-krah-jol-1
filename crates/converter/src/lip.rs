@@ -81,9 +81,12 @@ pub fn decode_bytes(data: &[u8]) -> Result<LipFile> {
         if raw.is_empty() || raw.len() % 4 != 0 {
             continue;
         }
-        let values: Vec<f32> = raw
-            .chunks_exact(4)
-            .map(|chunk| f32::from_le_bytes(chunk.try_into().expect("four-byte chunk")))
+        let (chunks, []) = raw.as_chunks::<4>() else {
+            continue;
+        };
+        let values: Vec<f32> = chunks
+            .iter()
+            .map(|chunk| f32::from_le_bytes(*chunk))
             .collect();
         if !values.iter().all(|value| (-2.0..=2.0).contains(value)) {
             continue;
