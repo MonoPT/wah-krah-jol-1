@@ -94,6 +94,9 @@ pub fn decode_bytes(data: &[u8]) -> Result<LipFile> {
         let count = values.len();
         let p0 = (PHONEME_SLOT_BASE + SLOTS_PER_FRAME - count % SLOTS_PER_FRAME) % SLOTS_PER_FRAME;
         let rows = (p0 + count).div_ceil(SLOTS_PER_FRAME);
+        if rows != header.frames as usize {
+            continue;
+        }
         candidates.push((
             rows.abs_diff(header.frames as usize),
             extra,
